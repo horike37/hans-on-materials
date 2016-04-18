@@ -14,7 +14,7 @@
 
 ###AMIMOTO AMIでEC2をセットアップしてください
 - ハンズオン最中にDBの切り替えなどを行いますので、本番環境は絶対に使わないでください
-- WooCommerce Powered by AMIMOTO (HHVM) on AWS Marketplace : https://aws.amazon.com/marketplace/pp/B00ZGTRMVU/
+- WooCommerce Powered by AMIMOTO (Apache HTTPD PHP7) on AWS Marketplace : https://aws.amazon.com/marketplace/pp/B01DAONMCK/
 - AMI料金は14日間無料（EC2インスタンス料金は必要）です
 
 ###AWS CLIのセットアップ
