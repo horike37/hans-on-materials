@@ -219,8 +219,7 @@ $ vim /opt/local/amimoto.json
 #####Before
 ```
 {
-	"nginx" : { "config" : { "user" : "ec2-user" } },
-	"php" : { "config" : { "user" : "ec2-user" } },
+	"mod_php7" : { "enabled": true },
 	"run_list" : [ "recipe[amimoto]" ]
 }
 ```
@@ -228,8 +227,7 @@ $ vim /opt/local/amimoto.json
 ######After
 ```
 {
-	"nginx" : { "config" : { "user" : "ec2-user" } },
-	"php" : { "config" : { "user" : "ec2-user" } },
+	"mod_php7" : { "enabled": true },
 	"mysql": { "enabled": false },
 	"run_list" : [ "recipe[amimoto]" ]
 }
