@@ -4,6 +4,10 @@
 オープンソースの全文検索エンジンシステムであるElasticsearchが利用できるマネージドサービスです。
 Amazon RDSのように簡単により強力な検索システムを利用することができます。
 
+##事前準備
+- AMIMOTO AMIを起動させてください
+- WooCommerceプラグインのインストールと有効化、初期設定を完了させてください
+
 ##Elasticsearch Serviceを立ち上げる
 - AWS管理画面へログイン
 - Elasticsearch Serviceをクリック
@@ -37,3 +41,31 @@ Amazon RDSのように簡単により強力な検索システムを利用する�
  - Elasticommerce Search Form
  - Elasticommerce Related Items
 - 必要な設定を入力
+
+###Elasticommerce Search Formの設定
+- 「Settings > Elasticommerce Service」を選択
+- 「Elasticsearch Endpoint」に作成したElasticsearchのドメインを入力して保存します
+
+###Elasticommerce Related Itemsの設定
+- 「Settings > Elasticommerce Service」を選択
+- 以下の設定が可能です
+
+|項目名|説明|
+|:--|:--|
+|Search Score|検索結果の関連性をフィルタする（数値が高いほど厳密に）|
+|Select Search Target|関連性検索を行う対象を指定する|
+
+- 「Import All Products」をクリックすることで、手動でWooCommerceの商品をElasticsearchにインポートできます
+
+###Elasticommerce Search Formを使う
+WooCommerceの標準機能である商品検索機能を、自動でElasticsearchの検索結果に置き換えます。
+
+###Elasticommerce Related Itemsを使う
+WooCommerceの標準機能である関連商品機能を、自動でElasticsearchの検索結果に置き換えます。  
+また関連商品表示ウィジェットとして「Elasticommerce Related Widgets」が利用できます。  
+さらに専用の関数を使うことで任意の処理を作成できます。
+
+|関数名|動き|
+|:--|:--|
+|escr_related_item();|表示しているページと関連性の高い商品を表示する|
+|escr_get_related_item();|表示しているページと関連性の高い商品データを取得する|
