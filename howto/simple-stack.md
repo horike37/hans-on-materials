@@ -269,8 +269,35 @@ S3のためのIAMユーザであることをわかるようにしましょう
 - 「AmazonS3FullAccess」を選択して「Attach Policy」をクリック
 
 ####バケットを作成
+- 管理画面からS3にアクセス
+- 「Create Bucket」をクリック
+- 「Bucket Name」に任意の名前をいれます  
+Note:すでに誰かが使っているバケット名は利用できません
+- 「Region」を選択します
+- 「Create」をクリックして作成します
+
 ####バケットの設定
+- S3のリストから先ほど作成したバケット名を選択します
+- 画面右上「Properties」をクリックします
+- 「Static Website Hosting」をクリックします
+- 「Endpoint」を控えます
+- 「Enable website hosting」を選択します
+- 「Index Document」に「index.html」を入力します
+- 「Save」を選択します
+
 ####WordPressプラグインを入れる
+- WordPress管理画面にログインします
+- Nephila Clavata(絡新婦)プラグインを有効化します
+- 「Settings > Nephila Clavata」からS3の設定を行います
+
+|項目名|入れる値|
+|:--|:--|
+|AWS Access Key|s3amimotoのAWS Access Key|
+|AWS Secret Key|s3amimotoのAWS Secret Key|
+|AWS Region|S3バケット作成時に指定したリージョン|
+|S3 Bucket|作成したS3バケットの名前|
+|S3 URL|S3バケットの「Endpoint」|
+|Storage Class|STANDARD|
 
 ##CloudFrontの最終設定
 最後にCloudFrontをWordPressで便利に使う設定を行います。
