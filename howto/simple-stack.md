@@ -208,4 +208,33 @@ if ( !$db_data ) {
 |[shift]+[z]２回|保存して終了|
 |i|編集モード|
 
+####接続を確認
+AMIMOTOのサイトにアクセスして、「データベース接続エラー」が表示されていないことを確認します。
+
+####EC2のMySQLを停止する
+```
+$ vim /opt/local/amimoto.json
+```
+以下のように「"mysql": { "enabled": false },」を追加します。
+#####Before
+```
+{
+	"nginx" : { "config" : { "user" : "ec2-user" } },
+	"php" : { "config" : { "user" : "ec2-user" } },
+	"run_list" : [ "recipe[amimoto]" ]
+}
+```
+
+######After
+```
+{
+	"nginx" : { "config" : { "user" : "ec2-user" } },
+	"php" : { "config" : { "user" : "ec2-user" } },
+	"mysql": { "enabled": false },
+	"run_list" : [ "recipe[amimoto]" ]
+}
+```
+
+
+
 ##AMIMOTOにS3を追加する
