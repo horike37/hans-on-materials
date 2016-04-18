@@ -233,6 +233,10 @@ $ vim /opt/local/amimoto.json
 }
 ```
 
-
+#####Run Command
+```
+$ sudo /opt/local/provision
+$ sudo service mysql stop
+```
 
 ##AMIMOTOにS3を追加する
