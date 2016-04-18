@@ -32,6 +32,15 @@ http://brew.sh/index.html
 - brew install wget
 - brew install awscli
 
+#### Windowsにインストールする
+- Download the AWS CLI MSI installer for Windows (64-bit):https://s3.amazonaws.com/aws-cli/AWSCLI64.msi
+- Download the AWS CLI MSI installer for Windows (32-bit):https://s3.amazonaws.com/aws-cli/AWSCLI32.msi
+
+デフォルトでは以下のディレクトリに展開されます
+
+- C:\Program Files\Amazon\AWSCLI (64-bit)
+- C:\Program Files (x86)\Amazon\AWSCLI (32-bit)
+
 ###AWS CLIを動かすためのIAM設定
 AWS CLIを動かすにはクレデンシャル（認証情報）が必要です。
 ここからはIAM (AWS Identity and Access Management) を使ってAWS CLIのための認証情報を取得します。
@@ -249,7 +258,7 @@ $ sudo service mysql stop
 - IAMを準備
 - バケットを作成
 - バケットの設定
-- WordPressプラグインを入れる
+- WordPressプラグインのセットアップ
 
 ####IAMを準備
 #####IAMユーザーを作成
@@ -301,3 +310,46 @@ Note:すでに誰かが使っているバケット名は利用できません
 
 ##CloudFrontの最終設定
 最後にCloudFrontをWordPressで便利に使う設定を行います。
+
+###設定手順
+- IAMを準備
+- WordPressプラグインのセットアップ
+
+####IAMを準備
+#####IAMユーザーを作成
+- 管理画面からIAMにアクセス
+- 左メニューの「Users」をクリック
+- 「Create News Users」をクリックしてウィザードを起動
+- 「Enter User names:」に「cfamimoto」と入力  
+CloudFrontのためのIAMユーザであることをわかるようにしましょう
+- 「Generate an access key for each user」のチェックをオンにする
+- 作成します
+
+#####IAMユーザーにポリシーを設定
+- 左メニューの「Users」をクリック
+- 「cfamimoto」をクリック
+- 「Permissions」をクリック
+- 「Managed Policies」の枠内にある「Attach Policy」をクリック
+- 「CloudFrontFullAccess」を選択して「Attach Policy」をクリック
+
+####WordPressプラグインのセットアップ
+#####キャッシュ削除プラグイン
+- WordPress管理画面にログインします
+- C3 CloudFront Clear Cacheプラグインを有効化します
+- 「Settings > C3 Settings」からCloudFrontの設定を行います
+
+|項目名|入れる値|
+|:--|:--|
+|CloudFront Distribution ID|CloudFrontのディストリビューションID|
+|AWS Access Key|cfamimotoのAWS Access Key|
+|AWS Secret Key|cfamimotoのAWS Secret Key|
+
+#####CloudFrontのディストリビューションID確認方法
+[](./img/cf_distrib.png)
+
+#####プレビューの更新を反映するためのプラグイン
+```
+$ cd /var/www/vhost/{INSTANCE_ID}/wp-content
+$ mkdir mu-plugins && cd mu-plugins
+$ wget wget https://gist.githubusercontent.com/wokamoto/ecfd3a7ea9ef80ea1628/raw/02e4e011597c0969f0ff4dec48de539a89b96e4a/cloudfront-preview-fix.php
+```
