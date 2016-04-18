@@ -1,5 +1,5 @@
 #JINKEI Simple Stackを作る
-![]()
+![](./img/stack.png)
 作る構成図
 
 ##この構成図でできること
