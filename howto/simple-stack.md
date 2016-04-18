@@ -240,3 +240,37 @@ $ sudo service mysql stop
 ```
 
 ##AMIMOTOにS3を追加する
+###S3を使うメリット
+- 低コストでメディアストレージを使える
+- 冗長化されて保存されるので、障害に強い
+- ファイル数・容量に上限なし
+
+###セットアップ手順
+- IAMを準備
+- バケットを作成
+- バケットの設定
+- WordPressプラグインを入れる
+
+####IAMを準備
+#####IAMユーザーを作成
+- 管理画面からIAMにアクセス
+- 左メニューの「Users」をクリック
+- 「Create News Users」をクリックしてウィザードを起動
+- 「Enter User names:」に「s3amimoto」と入力  
+S3のためのIAMユーザであることをわかるようにしましょう
+- 「Generate an access key for each user」のチェックをオンにする
+- 作成します
+
+#####IAMユーザーにポリシーを設定
+- 左メニューの「Users」をクリック
+- 「s3amimoto」をクリック
+- 「Permissions」をクリック
+- 「Managed Policies」の枠内にある「Attach Policy」をクリック
+- 「AmazonS3FullAccess」を選択して「Attach Policy」をクリック
+
+####バケットを作成
+####バケットの設定
+####WordPressプラグインを入れる
+
+##CloudFrontの最終設定
+最後にCloudFrontをWordPressで便利に使う設定を行います。
