@@ -345,7 +345,7 @@ CloudFrontのためのIAMユーザであることをわかるようにしまし�
 |AWS Secret Key|cfamimotoのAWS Secret Key|
 
 #####CloudFrontのディストリビューションID確認方法
-[](./img/cf_distrib.png)
+![](./img/cf_distrib.png)
 
 #####プレビューの更新を反映するためのプラグイン
 ```
