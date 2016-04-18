@@ -73,11 +73,32 @@ Default region name [None]: ap-northeast-1
 Default output format [None]: json
 ```
 
-####動作確認
+####AWS CLIの動作確認
 以下のコマンドでエラーが出なければ設定完了です。
 ```
 $ aws s3 ls
 ```
 
-
 ###CloudFrontをAWS CLIから使用する準備
+通常のAWS CLIではCloudFrontが利用できないため、有効化させます
+```
+$ aws --profile amimoto  configure set preview.cloudfront true
+```
+
+##AMIMOTOにCloudFrontを追加する
+- ORIGIN URLをAMIMOTOサーバのドメイン名（パブリックDNS）に書き換えます。
+- ORIGIN DOMAIN NAME HEREに公開予定のサイトドメインを入力します。  
+(ドメインを設定しない場合はORIGIN URL）を同じ値を入れてください
+
+```
+$ export origin_url='{ORIGIN URL}'; export domain='{ORIGIN DOMAIN NAME HERE}'; aws cloudfront create-distribution --cli-input-json "$(curl -l -s https://raw.githubusercontent.com/amimoto-ami/create-cf-dist-settings/master/source_dist_setting.sh | sh)"
+```
+
+###セットアップを待ちます
+CloudFrontが立ち上がるまで２０〜３０分程度かかります。
+待機している間にRDSとS3のセットアップを進めましょう。
+
+##AMIMOTOにRDSを追加する
+
+
+##AMIMOTOにS3を追加する
