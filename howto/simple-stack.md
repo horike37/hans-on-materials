@@ -183,8 +183,9 @@ $ wp db export /tmp/dump.sql
 ####MySQLでRDSにデータをインポート
 先ほどメモした値を使います
 ```
-$ mysql -h {RDS_ENDPOINT} -u {Master Username} -p{Master Password} {Database Name} < /tmp/dump.sql
+$ mysql -h {RDS_ENDPOINT} -u {Master Username} -p {Database Name} < /tmp/dump.sql
 ```
+*パスワードを要求されますので、{Master Password}を入力します。
 
 ###AMIMOTOのDBをRDSにつなぎかえる
 ####wp-config.phpを編集
