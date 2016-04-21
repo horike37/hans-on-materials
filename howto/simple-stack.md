@@ -160,7 +160,7 @@ $ mysql -u {Master Username} -p{Master Password} {Database Name}
 一致するものの「Status」が「available」になっていればOKです。
 
 ####セキュリティグループを設定
-- Endpointのアドレス右側に「No Inboud Permission」という赤文字がある場合、セキュリティグループの設定を変更します
+- セキュリティグループの設定を変更します
 - 「Edit Security Group」をクリックする
 - 「Inboud」タブをクリックする
 - 「Add Rule」をクリックする
