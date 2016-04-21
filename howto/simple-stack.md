@@ -186,9 +186,6 @@ $ wp db export /tmp/dump.sql
 $ mysql -h {RDS_ENDPOINT} -u {Master Username} -p{Master Password} {Database Name} < /tmp/dump.sql
 ```
 
-####余談：本番環境の移行に自信がない方は・・・
-AWS Database Migration Service:https://aws.amazon.com/jp/dms/
-
 ###AMIMOTOのDBをRDSにつなぎかえる
 ####wp-config.phpを編集
 ```
