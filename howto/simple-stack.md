@@ -85,7 +85,7 @@ Default output format [None]: json
 ####AWS CLIの動作確認
 以下のコマンドでエラーが出なければ設定完了です。
 ```
-$ aws s3 ls
+$ aws --profile amimoto s3 ls
 ```
 
 ###CloudFrontをAWS CLIから使用する準備
