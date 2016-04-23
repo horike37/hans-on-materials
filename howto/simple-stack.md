@@ -270,7 +270,7 @@ S3のためのIAMユーザであることをわかるようにしましょう
 
 #####IAMユーザーにポリシーを設定
 - 左メニューの「Users」をクリック
-- 「s3amimoto」をクリック
+- 「amimoto-s3」をクリック
 - 「Permissions」をクリック
 - 「Managed Policies」の枠内にある「Attach Policy」をクリック
 - 「AmazonS3FullAccess」を選択して「Attach Policy」をクリック
