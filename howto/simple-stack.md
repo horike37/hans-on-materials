@@ -8,7 +8,7 @@
 - S3を使った低コストメディアストレージ
 
 ##事前準備
-- AMIMOTO AMIでEC2をセットアップしてください
+- AMIMOTO AMIでEC2をセットアップしてください(WordPressのインストールまで必要です)
 - AWS CLIを使用しますので、これからセットアップします
 - CloudFrontをAWS CLIから使用する準備も必要です
 
@@ -184,6 +184,7 @@ $ wp db export /tmp/dump.sql
 $ mysql -h {RDS_ENDPOINT} -u {Master Username} -p {Database Name} < /tmp/dump.sql
 ```
 *パスワードを要求されますので、{Master Password}を入力します。
+*{RDS_ENDPOINT}には「:3306」というポート番号は不要です。
 
 ###AMIMOTOのDBをRDSにつなぎかえる
 ####wp-config.phpを編集
