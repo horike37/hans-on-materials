@@ -189,8 +189,9 @@ $ mysql -h {RDS_ENDPOINT} -u {Master Username} -p {Database Name} < /tmp/dump.sq
 ###AMIMOTOのDBをRDSにつなぎかえる
 ####wp-config.phpを編集
 ```
-$ cd /var/www/vhosts/{INSTANCE_ID}
-$ vim wp-config.php
+$ sudo su -
+# cd /var/www/vhosts/{INSTANCE_ID}
+# vim wp-config.php
 ```
 
 ####書き換える場所
