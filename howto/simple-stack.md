@@ -220,6 +220,7 @@ AMIMOTOのサイトにアクセスして、「データベース接続エラー�
 
 ####EC2のMySQLを停止する
 ```
+# exit
 $ vim /opt/local/amimoto.json
 ```
 以下のように「"mysql": { "enabled": false },」を追加します。
