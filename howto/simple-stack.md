@@ -51,7 +51,7 @@ https://console.aws.amazon.com/iam/home#home
 ####ユーザーを作成
 - 左メニューの「Users」をクリック
 - 「Create News Users」をクリックしてウィザードを起動
-- 「Enter User names:」に「awscli」と入力  
+- 「Enter User names:」に「amimoto-cli」と入力  
 AWS CLIのためのIAMユーザであることをわかるようにしましょう
 - 「Generate an access key for each user」のチェックをオンにする
 - 作成します
@@ -65,7 +65,7 @@ AWS CLIのためのIAMユーザであることをわかるようにしましょ�
 
 ####AWS CLIの初期設定
 ```
-aws configure --profile amimoto
+aws configure --profile amimoto-cli
 ```
 
 #####設定する値
@@ -85,13 +85,15 @@ Default output format [None]: json
 ####AWS CLIの動作確認
 以下のコマンドでエラーが出なければ設定完了です。
 ```
-$ aws --profile amimoto s3 ls
+$ aws --profile amimoto-cli c2 describe-instances
 ```
 
 ###CloudFrontをAWS CLIから使用する準備
 通常のAWS CLIではCloudFrontが利用できないため、有効化させます
 ```
-$ aws --profile amimoto  configure set preview.cloudfront true
+$ aws --profile amimoto-cli configure set preview.cloudfront true
+##動作確認
+$ aws --profile amimoto-cli  cloudfront help
 ```
 
 ##AMIMOTOにCloudFrontを追加する
@@ -106,9 +108,9 @@ CloudFrontを使うことで・・・
 - ORIGIN URLをAMIMOTOサーバのドメイン名（パブリックDNS）に書き換えます。
 - ORIGIN DOMAIN NAME HEREに公開予定のサイトドメインを入力します。  
 (ドメインを設定しない場合はORIGIN URL）を同じ値を入れてください
-
+- profile名を「amimoto-cli」以外にしている方は、「--profile amimoto-cli」の部分を変更する必要があります。
 ```
-$ export origin_url='{ORIGIN URL}'; export domain='{ORIGIN DOMAIN NAME HERE}'; aws cloudfront create-distribution --cli-input-json "$(curl -l -s https://raw.githubusercontent.com/amimoto-ami/create-cf-dist-settings/master/source_dist_setting.sh | sh)"
+$ export origin_url='{ORIGIN URL}'; export domain='{ORIGIN DOMAIN NAME HERE}'; aws --profile amimoto-cli  cloudfront create-distribution --cli-input-json "$(curl -l -s https://raw.githubusercontent.com/amimoto-ami/create-cf-dist-settings/master/source_dist_setting.sh | sh)"
 ```
 
 ###セットアップを待ちます
@@ -263,7 +265,7 @@ $ sudo service mysql stop
 - 管理画面からIAMにアクセス
 - 左メニューの「Users」をクリック
 - 「Create News Users」をクリックしてウィザードを起動
-- 「Enter User names:」に「s3amimoto」と入力  
+- 「Enter User names:」に「amimoto-s3」と入力  
 S3のためのIAMユーザであることをわかるようにしましょう
 - 「Generate an access key for each user」のチェックをオンにする
 - 作成します
@@ -299,8 +301,8 @@ Note:すでに誰かが使っているバケット名は利用できません
 
 |項目名|入れる値|
 |:--|:--|
-|AWS Access Key|s3amimotoのAWS Access Key|
-|AWS Secret Key|s3amimotoのAWS Secret Key|
+|AWS Access Key|amimoto-s3のAWS Access Key|
+|AWS Secret Key|amimoto-s3のAWS Secret Key|
 |AWS Region|S3バケット作成時に指定したリージョン|
 |S3 Bucket|作成したS3バケットの名前|
 |S3 URL|S3バケットの「Endpoint」|
@@ -318,14 +320,14 @@ Note:すでに誰かが使っているバケット名は利用できません
 - 管理画面からIAMにアクセス
 - 左メニューの「Users」をクリック
 - 「Create News Users」をクリックしてウィザードを起動
-- 「Enter User names:」に「cfamimoto」と入力  
+- 「Enter User names:」に「amimoto-cloudfront」と入力  
 CloudFrontのためのIAMユーザであることをわかるようにしましょう
 - 「Generate an access key for each user」のチェックをオンにする
 - 作成します
 
 #####IAMユーザーにポリシーを設定
 - 左メニューの「Users」をクリック
-- 「cfamimoto」をクリック
+- 「amimoto-cloudfront」をクリック
 - 「Permissions」をクリック
 - 「Managed Policies」の枠内にある「Attach Policy」をクリック
 - 「CloudFrontFullAccess」を選択して「Attach Policy」をクリック
@@ -339,8 +341,8 @@ CloudFrontのためのIAMユーザであることをわかるようにしまし�
 |項目名|入れる値|
 |:--|:--|
 |CloudFront Distribution ID|CloudFrontのディストリビューションID|
-|AWS Access Key|cfamimotoのAWS Access Key|
-|AWS Secret Key|cfamimotoのAWS Secret Key|
+|AWS Access Key|amimoto-cloudfrontのAWS Access Key|
+|AWS Secret Key|amimoto-cloudfrontのAWS Secret Key|
 
 #####CloudFrontのディストリビューションID確認方法
 ![](./img/cf_distrib.png)
