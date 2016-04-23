@@ -85,7 +85,7 @@ Default output format [None]: json
 ####AWS CLIの動作確認
 以下のコマンドでエラーが出なければ設定完了です。
 ```
-$ aws --profile amimoto-cli c2 describe-instances
+$ aws --profile amimoto-cli ec2 describe-instances
 ```
 
 ###CloudFrontをAWS CLIから使用する準備
