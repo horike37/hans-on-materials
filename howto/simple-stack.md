@@ -106,6 +106,8 @@ CloudFrontを使うことで・・・
 ```
 $ export origin_url='{ORIGIN URL}'; export domain='{ORIGIN DOMAIN NAME HERE}'; aws --profile amimoto-cli  cloudfront create-distribution --cli-input-json "$(curl -l -s https://raw.githubusercontent.com/amimoto-ami/create-cf-dist-settings/master/source_dist_setting.sh | sh)"
 ```
+####パブリックDNSがない場合
+http://qiita.com/kasokai/items/4ea689ce9f206e78a523
 
 ###セットアップを待ちます
 CloudFrontが立ち上がるまで２０〜３０分程度かかります。
