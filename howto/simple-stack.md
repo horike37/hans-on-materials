@@ -82,12 +82,6 @@ Default region name [None]: ap-northeast-1
 Default output format [None]: json
 ```
 
-####AWS CLIの動作確認
-以下のコマンドでエラーが出なければ設定完了です。
-```
-$ aws --profile amimoto-cli ec2 describe-instances
-```
-
 ###CloudFrontをAWS CLIから使用する準備
 通常のAWS CLIではCloudFrontが利用できないため、有効化させます
 ```
