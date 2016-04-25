@@ -113,6 +113,53 @@ http://qiita.com/kasokai/items/4ea689ce9f206e78a523
 CloudFrontが立ち上がるまで２０〜３０分程度かかります。
 待機している間にRDSとS3のセットアップを進めましょう。
 
+##AMIMOTOにS3を追加する
+###S3を使うメリット
+- 低コストでメディアストレージを使える
+- 冗長化されて保存されるので、障害に強い
+- ファイル数・容量に上限なし
+
+###セットアップ手順
+- IAMを準備
+- バケットを作成
+- バケットの設定
+- WordPressプラグインのセットアップ
+
+####IAMを準備
+#####IAMユーザーを作成
+- 管理画面からIAMにアクセス
+- 左メニューの「Users」をクリック
+- 「Create News Users」をクリックしてウィザードを起動
+- 「Enter User names:」に「amimoto-s3」と入力  
+S3のためのIAMユーザであることをわかるようにしましょう
+- 「Generate an access key for each user」のチェックをオンにする
+- 作成します
+
+#####IAMユーザーにポリシーを設定
+- 左メニューの「Users」をクリック
+- 「amimoto-s3」をクリック
+- 「Permissions」をクリック
+- 「Managed Policies」の枠内にある「Attach Policy」をクリック
+- 「AmazonS3FullAccess」を選択して「Attach Policy」をクリック
+
+####バケットを作成
+- 管理画面からS3にアクセス
+- 「Create Bucket」をクリック
+- 「Bucket Name」に任意の名前をいれます  
+Note:すでに誰かが使っているバケット名は利用できません
+- 「Region」を選択します
+- 「Create」をクリックして作成します
+
+####バケットの設定
+- S3のリストから先ほど作成したバケット名を選択します
+- 画面右上「Properties」をクリックします
+- 「Static Website Hosting」をクリックします
+- 「Endpoint」を控えます
+- 「Enable website hosting」を選択します
+- 「Index Document」に「index.html」を入力します
+- 「Save」を選択します
+
+
 ##AMIMOTOにRDSを追加する
 RDSを使用することで・・・
 
@@ -245,52 +292,6 @@ $ vim /opt/local/amimoto.json
 ```
 $ sudo /opt/local/provision
 ```
-
-##AMIMOTOにS3を追加する
-###S3を使うメリット
-- 低コストでメディアストレージを使える
-- 冗長化されて保存されるので、障害に強い
-- ファイル数・容量に上限なし
-
-###セットアップ手順
-- IAMを準備
-- バケットを作成
-- バケットの設定
-- WordPressプラグインのセットアップ
-
-####IAMを準備
-#####IAMユーザーを作成
-- 管理画面からIAMにアクセス
-- 左メニューの「Users」をクリック
-- 「Create News Users」をクリックしてウィザードを起動
-- 「Enter User names:」に「amimoto-s3」と入力  
-S3のためのIAMユーザであることをわかるようにしましょう
-- 「Generate an access key for each user」のチェックをオンにする
-- 作成します
-
-#####IAMユーザーにポリシーを設定
-- 左メニューの「Users」をクリック
-- 「amimoto-s3」をクリック
-- 「Permissions」をクリック
-- 「Managed Policies」の枠内にある「Attach Policy」をクリック
-- 「AmazonS3FullAccess」を選択して「Attach Policy」をクリック
-
-####バケットを作成
-- 管理画面からS3にアクセス
-- 「Create Bucket」をクリック
-- 「Bucket Name」に任意の名前をいれます  
-Note:すでに誰かが使っているバケット名は利用できません
-- 「Region」を選択します
-- 「Create」をクリックして作成します
-
-####バケットの設定
-- S3のリストから先ほど作成したバケット名を選択します
-- 画面右上「Properties」をクリックします
-- 「Static Website Hosting」をクリックします
-- 「Endpoint」を控えます
-- 「Enable website hosting」を選択します
-- 「Index Document」に「index.html」を入力します
-- 「Save」を選択します
 
 ####WordPressプラグインを入れる
 - WordPress管理画面にログインします
