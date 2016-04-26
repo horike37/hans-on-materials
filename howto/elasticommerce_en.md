@@ -18,6 +18,7 @@ Elasticsearch Service is the managed service for who wants to use open source fu
 ### Step2: Set up Cluster
 
 |Item|Value|
+|:--|:--|
 |Instance Type|t2.micro|
 |Instance count|1|
 |Storage Type|EBS|
