@@ -1,79 +1,90 @@
-#JINKEI Simple Stackを作る
+#Preparations
+http://bit.ly/1VAnJ8q
+- Set up EC2 instance with AMIMOTO AMI
+- Set up AWC-CLI on your PC/Mac
+- Configure AWC-CLI to conduct CloundFront from command line
+
+# Creating JIN-KEI Simple Stack
 ![](./img/stack.png)
-作る構成図
+Architecture
 
-##この構成図でできること
-- RDSを使うことで耐障害性を向上
-- CloudFrontでコンテンツの配信を高速化
-- S3を使った低コストメディアストレージ
+## All you get are:
+- Amazon RDS leads to server fault tolerance;
+- CloudFront leads to high-speed contents delivery;
+- Amazon S3 leads to a cost reduction for media storage;
 
-##事前準備
-- AMIMOTO AMIでEC2をセットアップしてください
-- AWS CLIを使用しますので、これからセットアップします
-- CloudFrontをAWS CLIから使用する準備も必要です
+## Need some prior arrangement
+- Set up EC2 instance with AMIMOTO AMI
+- Set up AWC-CLI on your PC/Mac
+- Configure AWC-CLI to control CloundFront from command line
 
-###AMIMOTO AMIでEC2をセットアップしてください
-- ハンズオン最中にDBの切り替えなどを行いますので、本番環境は絶対に使わないでください
+### Launch EC2 instance with AMIMOTO AMI
+- On this hands-on, we'll migrate databases, so make sure you're working on develop environment.
 - WooCommerce Powered by AMIMOTO (Apache HTTPD PHP7) on AWS Marketplace : https://aws.amazon.com/marketplace/pp/B01DAONMCK/
-- AMI料金は14日間無料（EC2インスタンス料金は必要）です
+- AMI fee is free for 14 days (AWS infrastructure charges still apply);
 
-###AWS CLIのセットアップ
-aws-cli のインストール方法は二通り:
 
-- AWS ユーザガイドページの手順で行う:  
+Try one instance of this product for 14 days. There will be no hourly software charges for that instance, but AWS infrastructure charges still apply. Free Trials will automatically convert to a paid hourly subscription upon expiration. Note that Free Trials are only applicable for hourly subscriptions, but you can opt to purchase an annual subscription at any time.
+
+
+### Set up AWS CLI
+Two ways to install AWS CLI: 
+- Following AWS User guide:
 http://docs.aws.amazon.com/cli/latest/userguide/installing.html
-- Mac の場合は パッケージマネージャの Homebrew を使ってインストールをする:  
+- For Mac user install it through package manager Homebrew:
 http://brew.sh/index.html
 
-####Homebrewからセットアップする
-以下のコマンドをターミナルへ入力します
-
+#### Mac: Setting up with Homebrew
+Copy below command then paste to Terminal.app
 - /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 - brew install wget
 - brew install awscli
 
-#### Windowsにインストールする
+#### Windows: Download installer and use it
 - Download the AWS CLI MSI installer for Windows (64-bit):https://s3.amazonaws.com/aws-cli/AWSCLI64.msi
 - Download the AWS CLI MSI installer for Windows (32-bit):https://s3.amazonaws.com/aws-cli/AWSCLI32.msi
 
-デフォルトでは以下のディレクトリに展開されます
-
+By default, files are extract into below directory:
 - C:\Program Files\Amazon\AWSCLI (64-bit)
 - C:\Program Files (x86)\Amazon\AWSCLI (32-bit)
 
-###AWS CLIを動かすためのIAM設定
-AWS CLIを動かすにはクレデンシャル（認証情報）が必要です。
-ここからはIAM (AWS Identity and Access Management) を使ってAWS CLIのための認証情報を取得します。
+### Set up IAM for AWS CLI
+You need credentials to use AWS CLI, so create and get it from AWS console using IAM (AWS Identity and Access Management).
 
-####AWSコンソールからIAMのページへ移動
+#### Open IAM page on AWS Console
 https://console.aws.amazon.com/iam/home#home
 
-####ユーザーを作成
-- 左メニューの「Users」をクリック
-- 「Create News Users」をクリックしてウィザードを起動
-- 「Enter User names:」に「awscli」と入力  
-AWS CLIのためのIAMユーザであることをわかるようにしましょう
-- 「Generate an access key for each user」のチェックをオンにする
-- 作成します
+#### Create a user
+- Click [Users] on left menu;
+- Click [Create New Users] to launch wizard;
+- Input [awscli] into [Enter User Names], to define the user is for awscli;
+- Check [Generate an access key for each user];
+- Create it;
 
-####クレデンシャルを保存
+#### Save credentials to your PC
+Make sure you copied it into your PC, you cannot get them again if you closed the window or tab.
+If you lost them create another user and get another credentials.
 - Access Key ID
 - Secret Access Key
 
-この２つを手元に控えてください。（CSVでダウンロード可能）
-この画面を閉じると２度と見れませんので、紛失した場合は再発行となります。
+##### Attach policy to IAM user awscli
+##### Attach policy to created IAM user
+- Click [Users] on the left menu;
+- Click [awcli];
+- Click [Permissions];
+- Click [Attach Policy] in [Managed Policies] area;
+- Choose  [CloudFrontFullAccess] then click [Attach Policy];
 
-####AWS CLIの初期設定
+#### Initial set ups AWS CLI
 ```
-aws configure --profile amimoto
+aws configure --profile awscli
 ```
 
-#####設定する値
-以下の値を対話式で入力します
-
-- クレデンシャル
-- デフォルトリージョン
-- 実行結果を表示するフォーマット
+##### Values
+Input below values on verbose: 
+- Credentials
+- Default Region
+- Output formant
 
 ```
 AWS Access Key ID [None]: xxxxxxxxxx
@@ -82,120 +93,167 @@ Default region name [None]: ap-northeast-1
 Default output format [None]: json
 ```
 
-####AWS CLIの動作確認
-以下のコマンドでエラーが出なければ設定完了です。
+#### Check settings on AWS CLI
+Run below command: 
 ```
-$ aws s3 ls
+$ aws --profile awscli s3 ls
 ```
+If you get no error messages, settings are successfully completed.
 
-###CloudFrontをAWS CLIから使用する準備
-通常のAWS CLIではCloudFrontが利用できないため、有効化させます
+### Some set ups to conduct CloudFront through AWC CLI
+Basically, AWC CLI disabled CloudFront control. We'll make enable it.
 ```
 $ aws --profile amimoto  configure set preview.cloudfront true
 ```
 
-##AMIMOTOにCloudFrontを追加する
-CloudFrontを使うことで・・・
+## Add CloudFront to AMIMOTO
+Benefits to use CloudFront are
+- You can use CDN server on AWS around the world;
+- CDN reduces server loads and distribute contents high data transfer speeds
+- Server fault tolerance with customisable response error message
 
-- 世界各地にあるAWSのもつCDNサーバを使える
-- CDNを用いることでサイトの高速化とサーバ負荷削減を同時実現
-- エラーレスポンスのカスタマイズが可能なので、サーバ障害時にも強くなる
-
-###セットアップコマンド
-
-- ORIGIN URLをAMIMOTOサーバのドメイン名（パブリックDNS）に書き換えます。
-- ORIGIN DOMAIN NAME HEREに公開予定のサイトドメインを入力します。  
-(ドメインを設定しない場合はORIGIN URL）を同じ値を入れてください
+### Set up commands
+- Replace ORIGIN URL to the server domain name (or Public DNS) of AMIMOTO;
+- Replace ORIGIN DOMAIN NAME HERE to your domain name of your site for public; 
+note: if you have no domain to set, input same values of ORIGIN URL
 
 ```
 $ export origin_url='{ORIGIN URL}'; export domain='{ORIGIN DOMAIN NAME HERE}'; aws cloudfront create-distribution --cli-input-json "$(curl -l -s https://raw.githubusercontent.com/amimoto-ami/create-cf-dist-settings/master/source_dist_setting.sh | sh)"
 ```
 
-###セットアップを待ちます
-CloudFrontが立ち上がるまで２０〜３０分程度かかります。
-待機している間にRDSとS3のセットアップを進めましょう。
+### Wait for starting CloudFront
+It takes 20-30 minutes to start CloudFront.
+Set up S3 and RDS while CloudFront is progress on its starts.
 
-##AMIMOTOにRDSを追加する
-RDSを使用することで・・・
 
-- 管理の簡単なDBサーバを簡単に使える
-- DBのレプリケーションやスペック変更が１クリックで実現可能
-- MySQL / MariaDB / Amazon Auroraなど、様々なエンジンを使える
+## Add S3 to AMIMOTO
+### Benefits to using S3
+- Extremely low cost media storages
+- S3 has redundancy to improve server fault tolerance
+- No limits for number of files or sizes
 
-###RDSをセットアップする
-- AWS管理画面へアクセス
-- RDSのアイコンをクリック
-- 「Instance」から「Launch DB Instance」をクリック
-- DBエンジンを選択（MariaDBを推奨）
-- Amazon Auroraを勧められますが、お金に余裕がないなら避けましょう
+### Set up S3
+- Create IAM user
+- Create bucket
+- Configure bucket
+- Set up WordPress plugin
 
-###RDSの初期設定
-「Specify DB Details」という画面でDBの初期設定を行います
+#### Create IAM user
+##### Create IAM user
+- Click [IAM] in AWS Console;
+- Click [Users] on the left menu;
+- Click [Create New Users] to launch wizard;
+- Input [s3amimoto] into [Enter User Names], to define the user is for S3;
+- Check [Generate an access key for each user];
+- Create it;
 
-####「Settings」に入れる値
+##### Attach policy to created IAM user
+- Click [Users] on the left menu;
+- Click [s3amimoto];
+- Click [Permissions];
+- Click [Attach Policy] in [Managed Policies] area;
+- Choose  [AmazonS3FullAccess] then click [Attach Policy];
 
-|項目名|入れる値|
-|:--|:--|
-|DB Instance Identifier|DBインスタンス名|
-|Master Username|DBのルートユーザー名|
-|Master Password|DBのルートユーザーパスワード|
-|Confirm Passoword|パスワードの確認|
 
-DBに接続する際に必須の値ですので、手元にメモしておきましょう。
-その他の設定は（ハンズオンでは）特に変更しなくてOKです。
+#### Create bucket
+- Click [S3] on AWS Console;
+- Click [Create Bucket];
+- Enter specify name into [Bucket Name];
+note: Bucket name must be unique
+- Choose [Region];
+- Click [Create] to create bucket;
 
-####「Configure Advanced Settings」でDB名を設定する
-「Database Name」という項目に入れた値がDB名になりますので、これも控えておきましょう。
+#### Bucket settings
+- Choose bucket name which you created;
+- Click [Properties] on the right top of the window;
+- Click [Statig Website Hosting]
+- Choose [Enable website hosting]
+- Enter [index.html] to [Index Document]
+- [Save]
 
-#####こんなイメージです
+
+
+## Add RDS to AMIMOTO
+Benefits to use RDS are:
+- You can use DB server with easy to set up and manage;
+- Single click to replicate DB or changing its specifications;
+- Various DB engines like MySQL/MariaDB/Amazon Aurora;
+
+### Set up RDS
+- Access AWS Console
+- Click RDS icon
+- Click [Launch DB Instance] on [Instance]
+- Choose DB engine (we recommend MariaDB)
+- Amazon recommends its Aurora, but a little expensive
+
+### Initial set ups
+You can set up on [Specify DB Details] page
+
+#### Values of [Settings] column
+
+| Item | Value |
+| :-- | :-- |
+| DB Instance Identifier | Name of DB instance |
+| Master Username | Root user name of DB |
+| Master Password | Root password of root user |
+| Confirm Passoword | Confirm root password |
+Above are required values to connect the DB, save them as text file.
+You don't need to change other items, on this hands-on.
+
+#### Set DB name on [Configure Advanced Settings]
+Copy the value in [Database Name] which will be  sated as DataBase name.
+
+##### Sample command to connect RDS
 ```
-$ mysql -u {Master Username} -p{Master Password} {Database Name}
+$ mysql -u {Master Username} -p {Master Password} {Database Name}
 ```
+$ mysql -h {endpoint} -u {Master Username} -p {Master Password} {Database Name}
 
-####RDSを作成します
-作成には少し時間がかかります。
-今の間に一息いれましょう。
+#### Create RDS
+It takes a little time, wanna drink some cup of coffee?
 
-左メニュー「Instance」をクリックして「DB Instance Identifier」と同じ名前の「DB Instance」を探してください。
-一致するものの「Status」が「available」になっていればOKです。
+When you click [Instance], you'll find  [DB Instance] same name as [DB Instance Identifier] .
+Check the status column. If it is displayed as [Availalble], you succeeded RDS creation.
 
-####セキュリティグループを設定
-- セキュリティグループの設定を変更します
-- 「Edit Security Group」をクリックする
-- 「Inboud」タブをクリックする
-- 「Add Rule」をクリックする
-- 「Type」を「MySQL/Aurora」に設定する
-- 「Source」は「Anywhere」を選択する  
-可能な方はAMIMOTO AMIのIP（XX.XXX.XXX.XX/0）にしてみてください
-- 「Save」をクリック
+#### Configure Security Group 
+- Let's configure security group
+- Click [Edit Security Group]
+- Click [Inbound] tab
+- Click [Add Rule]
+- Set [Type] as [MySQL/Aurora]
+- Choose [Anywhere] in [Source]
+note: you can set AMIMOTO AMI's IP Address (xxx.xxxx.xxx.xxx/0) to [Source].
+- Click [Save]
 
-###AMIMOTOのDB情報をRDSに移行する
-####AMIMOTOにSSH接続
-AMIMOTOのインスタンスにSSHで接続してください。
+
+### Migrate AMIMOTO's DB to RDS 
+#### SSH to AMIMOTO instance
+Connect to your AMIMOTO instance through SSH
 ```
 $ ssh -i /path/to/pem/{PEMFILENAME}.pem ec2-user@{INSTANCE_IP}
 ```
-####WP-CLIからAMIMOTOのDB情報をエクスポート
+#### Export DB information using WP-CLI
 ```
 $ cd /var/www/vhosts/{INSTANCE_ID}
 $ wp db export /tmp/dump.sql
 ```
-####MySQLでRDSにデータをインポート
-先ほどメモした値を使います
+#### Import the exported DB information to RDS 
+Paste value which you copied before in Values of [Settings] column section.
+
 ```
 $ mysql -h {RDS_ENDPOINT} -u {Master Username} -p {Database Name} < /tmp/dump.sql
 ```
-*パスワードを要求されますので、{Master Password}を入力します。
+Note: input {Master Password} when he asks password
 
-###AMIMOTOのDBをRDSにつなぎかえる
-####wp-config.phpを編集
+### Replace DB connection from AMIMOTO's inner DB to RDS
+#### Edit wp-config.php
 ```
 $ cd /var/www/vhosts/{INSTANCE_ID}
 $ vim wp-config.php
 ```
 
-####書き換える場所
-wp-config.php(Line:26-33)
+#### Where you should edit:
+wp-config.php (Line: 26-33)
 ```
 if ( !$db_data ) {
     $db_data = array(
@@ -206,148 +264,105 @@ if ( !$db_data ) {
     );
 }
 ```
-#####vimを使う場合・・・
+##### If you're Vim user: 
 
-|コマンド|できること|
-|:--|:--|
-|[esc]|ノーマルモード|
-|:set number|行数表示|
-|[shift]+[z]２回|保存して終了|
-|i|編集モード|
+| Command | mode |
+| :-- | :--|
+| [esc] | enter nomal mode|
+| :set number | show line numbers |
+| [shift]+[z][z] | save and exit |
+| i | enter edit mode |
 
-####接続を確認
-AMIMOTOのサイトにアクセスして、「データベース接続エラー」が表示されていないことを確認します。
+#### Check RDS connections
+If you don't see [Error Establishing a Database Connection] when you access your AMIMOTO site with browser, settings and connections are correct.
 
-####EC2のMySQLを停止する
+#### Stop MySQL in EC2
 ```
 $ vim /opt/local/amimoto.json
 ```
-以下のように「"mysql": { "enabled": false },」を追加します。
-#####Before
+Add ["mysql": { "enabled": false },] line.
+Don't forget add comma(,) in the end of line.
+##### Before
 ```
 {
-	"mod_php7" : { "enabled": true },
-	"run_list" : [ "recipe[amimoto]" ]
+  "mod_php7" : { "enabled": true },
+  "run_list" : [ "recipe[amimoto]" ]
 }
 ```
 
 ######After
 ```
 {
-	"mod_php7" : { "enabled": true },
-	"mysql": { "enabled": false },
-	"run_list" : [ "recipe[amimoto]" ]
+  "mod_php7" : { "enabled": true },
+  "mysql": { "enabled": false },
+  "run_list" : [ "recipe[amimoto]" ]
 }
 ```
 
-#####Run Command
+##### Run Command
 ```
 $ sudo /opt/local/provision
 $ sudo service mysql stop
 ```
 
-##AMIMOTOにS3を追加する
-###S3を使うメリット
-- 低コストでメディアストレージを使える
-- 冗長化されて保存されるので、障害に強い
-- ファイル数・容量に上限なし
+#### Install plugin to WordPress
+- Login to WordPress' Dashboard;
+- Enable Nephila Clavata pluign on the plugin page;
+- Fill in S3 settings to [Nephila Clavata] on [Setting];
 
-###セットアップ手順
-- IAMを準備
-- バケットを作成
-- バケットの設定
-- WordPressプラグインのセットアップ
+| Item Name | Value |
+| :-- | :--|
+| AWS Access Key | AWS Access key of your s3amimoto |
+| AWS Secret Key | s3amimotoのAWS Secret Key |
+| AWS Region | Choose specify region which you created S3 bucket on |
+| S3 Bucket | Name of S3 bucket which you created |
+| S3 URL | [Endpoint] of S3 Bucket |
+| Storage Class | STANDARD |
 
-####IAMを準備
-#####IAMユーザーを作成
-- 管理画面からIAMにアクセス
-- 左メニューの「Users」をクリック
-- 「Create News Users」をクリックしてウィザードを起動
-- 「Enter User names:」に「s3amimoto」と入力  
-S3のためのIAMユーザであることをわかるようにしましょう
-- 「Generate an access key for each user」のチェックをオンにする
-- 作成します
+## Last settings for CloudFront
+Set up some utilities for CloudFront on WordPress
 
-#####IAMユーザーにポリシーを設定
-- 左メニューの「Users」をクリック
-- 「s3amimoto」をクリック
-- 「Permissions」をクリック
-- 「Managed Policies」の枠内にある「Attach Policy」をクリック
-- 「AmazonS3FullAccess」を選択して「Attach Policy」をクリック
+### Work flows
+- Create IAM user
+- Set up plugin for WordPress
 
-####バケットを作成
-- 管理画面からS3にアクセス
-- 「Create Bucket」をクリック
-- 「Bucket Name」に任意の名前をいれます  
-Note:すでに誰かが使っているバケット名は利用できません
-- 「Region」を選択します
-- 「Create」をクリックして作成します
+#### Create IAM user
+##### Create IAM user
+- Click [IAM] in AWS Console;
+- Click [Users] on the left menu;
+- Click [Create New Users] to launch wizard;
+- Input [cfamimoto] into [Enter User Names], to define the user is for CloudFront;
+- Check [Generate an access key for each user];
+- Create it;
 
-####バケットの設定
-- S3のリストから先ほど作成したバケット名を選択します
-- 画面右上「Properties」をクリックします
-- 「Static Website Hosting」をクリックします
-- 「Endpoint」を控えます
-- 「Enable website hosting」を選択します
-- 「Index Document」に「index.html」を入力します
-- 「Save」を選択します
+##### Attach policies to IAM user
+Attach policy to created IAM user
+- Click [Users] on the left menu;
+- Click [cfamimoto];
+- Click [Permissions];
+- Click [Attach Policy] in [Managed Policies] area;
+- Choose  [CloudFrontFullAccess] then click [Atattch Policy];
 
-####WordPressプラグインを入れる
-- WordPress管理画面にログインします
-- Nephila Clavata(絡新婦)プラグインを有効化します
-- 「Settings > Nephila Clavata」からS3の設定を行います
+#### Set up plugin for WordPress
+##### Set up Cache flush plugin: C3 CloudFront Clear Cache
+- Login to the Dashboard;
+- Enable [C3 CloudFront Clear Cache] on plugin page;
+- Fill in some value on [C3 Settings] on [Setting] menu;
 
-|項目名|入れる値|
-|:--|:--|
-|AWS Access Key|s3amimotoのAWS Access Key|
-|AWS Secret Key|s3amimotoのAWS Secret Key|
-|AWS Region|S3バケット作成時に指定したリージョン|
-|S3 Bucket|作成したS3バケットの名前|
-|S3 URL|S3バケットの「Endpoint」|
-|Storage Class|STANDARD|
 
-##CloudFrontの最終設定
-最後にCloudFrontをWordPressで便利に使う設定を行います。
+| Item Name | Value |
+| :-- | :-- |
+| CloudFront Distribution ID | input your CloudFront Distribution ID |
+| AWS Access Key | AWS Access Key of cfamimoto |
+| AWS Secret Key | AWS Secret Key of cfamimoto|
 
-###設定手順
-- IAMを準備
-- WordPressプラグインのセットアップ
-
-####IAMを準備
-#####IAMユーザーを作成
-- 管理画面からIAMにアクセス
-- 左メニューの「Users」をクリック
-- 「Create News Users」をクリックしてウィザードを起動
-- 「Enter User names:」に「cfamimoto」と入力  
-CloudFrontのためのIAMユーザであることをわかるようにしましょう
-- 「Generate an access key for each user」のチェックをオンにする
-- 作成します
-
-#####IAMユーザーにポリシーを設定
-- 左メニューの「Users」をクリック
-- 「cfamimoto」をクリック
-- 「Permissions」をクリック
-- 「Managed Policies」の枠内にある「Attach Policy」をクリック
-- 「CloudFrontFullAccess」を選択して「Attach Policy」をクリック
-
-####WordPressプラグインのセットアップ
-#####キャッシュ削除プラグイン
-- WordPress管理画面にログインします
-- C3 CloudFront Clear Cacheプラグインを有効化します
-- 「Settings > C3 Settings」からCloudFrontの設定を行います
-
-|項目名|入れる値|
-|:--|:--|
-|CloudFront Distribution ID|CloudFrontのディストリビューションID|
-|AWS Access Key|cfamimotoのAWS Access Key|
-|AWS Secret Key|cfamimotoのAWS Secret Key|
-
-#####CloudFrontのディストリビューションID確認方法
+##### How to check CloudFront Distribution ID
 ![](./img/cf_distrib.png)
 
-#####プレビューの更新を反映するためのプラグイン
+##### Plugin for apply changes on preview 
 ```
 $ cd /var/www/vhost/{INSTANCE_ID}/wp-content
-$ mkdir mu-plugins && cd mu-plugins
-$ wget wget https://gist.githubusercontent.com/wokamoto/ecfd3a7ea9ef80ea1628/raw/02e4e011597c0969f0ff4dec48de539a89b96e4a/cloudfront-preview-fix.php
+$ sudo mkdir mu-plugins && cd mu-plugins
+$ sudo wget https://gist.githubusercontent.com/wokamoto/ecfd3a7ea9ef80ea1628/raw/02e4e011597c0969f0ff4dec48de539a89b96e4a/cloudfront-preview-fix.php
+$ sudo chown nginx:nginx cloudfront-preview-fix.php
 ```
