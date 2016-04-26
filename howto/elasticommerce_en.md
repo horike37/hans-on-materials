@@ -17,11 +17,11 @@ Elasticsearch Service is the managed service for who wants to use open source fu
 
 ### Step2: Set up Cluster
 
-| Item | Value | 
-| Instance Type | t2.micro| 
-| Instance count |  1| 
-| Storage Type | EBS| 
-| EBS volume type | General Purpose(SSD)| 
+| Item | Value |
+| Instance Type | t2.micro|
+| Instance count | 1 |
+| Storage Type | EBS|
+| EBS volume type | General Purpose(SSD)|
 
 Default works fine for the other items.
 
@@ -49,10 +49,10 @@ Note: we recommend set IP address restrictions on production stage.
 ### Setting up Elasticommerce Related Items
 - Choose [Settings] --> [Elasticommcerce Service]
 -　Setting items are below:
-| Items | Description | 
-| :-- | :-- | 
-| Search Score | Filter the relativity for search results (higher value for more strict relativity) | 
-| Select Search Target | Order target items for relativity search | 
+| Items | Description |
+| :-- | :-- |
+| Search Score | Filter the relativity for search results (higher value for more strict relativity) |
+| Select Search Target | Order target items for relativity search |
 
 - To import items on WooCommerce manually, just click [Import All Products]
 
@@ -62,10 +62,10 @@ Replace search result from standard product search of WooCommerce to Elasticsear
 ### How to use Elasticommerce Related Items
 It replaces the WooCommerce's default related items feature to Elasticsearch's one. And  you can use [Elasticommerce Related Widgets] for [Related items Widgets], also you can create any process by using a dedicated function. 
 
-| Functions | Description | 
-| :--| :--| 
-| escr_related_item();| Display related items for displayed page | 
-| escr_get_related_item();| Get items' data on displayed page | 
+| Functions | Description |
+| :--| :--|
+| escr_related_item();| Display related items for displayed page |
+| escr_get_related_item();| Get items' data on displayed page |
 
 
 
