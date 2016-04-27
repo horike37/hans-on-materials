@@ -49,7 +49,8 @@ Note: we recommend set IP address restrictions on production stage.
 
 ### Setting up Elasticommerce Related Items
 - Choose [Settings] --> [Elasticommcerce Service]
--　Setting items are below:
+-Setting items are below:
+
 |Items|Description|
 |:--|:--|
 |Search Score|Filter the relativity for search results (higher value for more strict relativity)|
