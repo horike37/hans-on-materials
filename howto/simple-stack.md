@@ -100,13 +100,12 @@ CloudFrontを使うことで・・・
 ###セットアップコマンド
 
 - ORIGIN URLをAMIMOTOサーバのドメイン名（パブリックDNS）に書き換えます。
-- ORIGIN DOMAIN NAME HEREに公開予定のサイトドメインを入力します。  
-(ドメインを設定しない場合はORIGIN URL）を同じ値を入れてください
+- ハンズオンではCloudFrontのパブリックDNSをサイトドメインとして使用します。 
 - profile名を「amimoto-cli」以外にしている方は、「--profile amimoto-cli」の部分を変更する必要があります。
 ```
-$ export origin_url='{ORIGIN URL}'; export domain='{ORIGIN DOMAIN NAME HERE}'; aws --profile amimoto-cli  cloudfront create-distribution --cli-input-json "$(curl -l -s https://raw.githubusercontent.com/amimoto-ami/create-cf-dist-settings/master/source_dist_setting.sh | sh)"
+$ export origin_url='{ORIGIN URL}'; aws --profile amimoto-cli  cloudfront create-distribution --cli-input-json "$(curl -l -s https://raw.githubusercontent.com/amimoto-ami/create-cf-dist-settings/master/source_dist_setting.sh | sh)"
 ```
-####パブリックDNSがない場合
+####EC2のパブリックDNSがない場合
 http://qiita.com/kasokai/items/4ea689ce9f206e78a523
 
 ###セットアップを待ちます
@@ -124,23 +123,6 @@ CloudFrontが立ち上がるまで２０〜３０分程度かかります。
 - バケットを作成
 - バケットの設定
 - WordPressプラグインのセットアップ
-
-####IAMを準備
-#####IAMユーザーを作成
-- 管理画面からIAMにアクセス
-- 左メニューの「Users」をクリック
-- 「Create News Users」をクリックしてウィザードを起動
-- 「Enter User names:」に「amimoto-s3」と入力  
-S3のためのIAMユーザであることをわかるようにしましょう
-- 「Generate an access key for each user」のチェックをオンにする
-- 作成します
-
-#####IAMユーザーにポリシーを設定
-- 左メニューの「Users」をクリック
-- 「amimoto-s3」をクリック
-- 「Permissions」をクリック
-- 「Managed Policies」の枠内にある「Attach Policy」をクリック
-- 「AmazonS3FullAccess」を選択して「Attach Policy」をクリック
 
 ####バケットを作成
 - 管理画面からS3にアクセス
@@ -214,25 +196,6 @@ $ mysql -u {Master Username} -p{Master Password} {Database Name}
 可能な方はAMIMOTO AMIのIP（XX.XXX.XXX.XX/0）にしてみてください
 - 「Save」をクリック
 
-###AMIMOTOのDB情報をRDSに移行する
-####AMIMOTOにSSH接続
-AMIMOTOのインスタンスにSSHで接続してください。
-```
-$ ssh -i /path/to/pem/{PEMFILENAME}.pem ec2-user@{INSTANCE_IP}
-```
-####WP-CLIからAMIMOTOのDB情報をエクスポート
-```
-$ cd /var/www/vhosts/{INSTANCE_ID}
-$ wp db export /tmp/dump.sql
-```
-####MySQLでRDSにデータをインポート
-先ほどメモした値を使います
-```
-$ mysql -h {RDS_ENDPOINT} -u {Master Username} -p {Database Name} < /tmp/dump.sql
-```
-*パスワードを要求されますので、{Master Password}を入力します。
-*{RDS_ENDPOINT}には「:3306」というポート番号は不要です。
-
 ###AMIMOTOのDBをRDSにつなぎかえる
 ####wp-config.phpを編集
 ```
@@ -263,7 +226,7 @@ if ( !$db_data ) {
 |i|編集モード|
 
 ####接続を確認
-AMIMOTOのサイトにアクセスして、「データベース接続エラー」が表示されていないことを確認します。
+CloudFrontのパブリックDNSにブラウザからアクセスしてWordPressのインストールを実施します。
 
 ####EC2のMySQLを停止する
 ```
@@ -300,8 +263,8 @@ $ sudo /opt/local/provision
 
 |項目名|入れる値|
 |:--|:--|
-|AWS Access Key|amimoto-s3のAWS Access Key|
-|AWS Secret Key|amimoto-s3のAWS Secret Key|
+|AWS Access Key|amimoto-cliのAWS Access Key|
+|AWS Secret Key|amimoto-cliのAWS Secret Key|
 |AWS Region|S3バケット作成時に指定したリージョン|
 |S3 Bucket|作成したS3バケットの名前|
 |S3 URL|S3バケットの「Endpoint」|
@@ -311,25 +274,7 @@ $ sudo /opt/local/provision
 最後にCloudFrontをWordPressで便利に使う設定を行います。
 
 ###設定手順
-- IAMを準備
 - WordPressプラグインのセットアップ
-
-####IAMを準備
-#####IAMユーザーを作成
-- 管理画面からIAMにアクセス
-- 左メニューの「Users」をクリック
-- 「Create News Users」をクリックしてウィザードを起動
-- 「Enter User names:」に「amimoto-cloudfront」と入力  
-CloudFrontのためのIAMユーザであることをわかるようにしましょう
-- 「Generate an access key for each user」のチェックをオンにする
-- 作成します
-
-#####IAMユーザーにポリシーを設定
-- 左メニューの「Users」をクリック
-- 「amimoto-cloudfront」をクリック
-- 「Permissions」をクリック
-- 「Managed Policies」の枠内にある「Attach Policy」をクリック
-- 「CloudFrontFullAccess」を選択して「Attach Policy」をクリック
 
 ####WordPressプラグインのセットアップ
 #####キャッシュ削除プラグイン
@@ -340,8 +285,8 @@ CloudFrontのためのIAMユーザであることをわかるようにしまし�
 |項目名|入れる値|
 |:--|:--|
 |CloudFront Distribution ID|CloudFrontのディストリビューションID|
-|AWS Access Key|amimoto-cloudfrontのAWS Access Key|
-|AWS Secret Key|amimoto-cloudfrontのAWS Secret Key|
+|AWS Access Key|amimoto-cliのAWS Access Key|
+|AWS Secret Key|amimoto-cliのAWS Secret Key|
 
 #####CloudFrontのディストリビューションID確認方法
 ![](./img/cf_distrib.png)
