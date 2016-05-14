@@ -100,11 +100,9 @@ CloudFrontを使うことで・・・
 ###セットアップコマンド
 
 - ORIGIN URLをAMIMOTOサーバのドメイン名（パブリックDNS）に書き換えます。
-- ORIGIN DOMAIN NAME HEREに公開予定のサイトドメインを入力します。  
-(ドメインを設定しない場合はORIGIN URL）を同じ値を入れてください
 - profile名を「amimoto-cli」以外にしている方は、「--profile amimoto-cli」の部分を変更する必要があります。
 ```
-$ export origin_url='{ORIGIN URL}'; aws --profile amimoto-cli  cloudfront create-distribution --cli-input-json "$(curl -l -s https://raw.githubusercontent.com/amimoto-ami/create-cf-dist-settings/master/source_dist_setting.sh | sh)"
+$ export origin_url='{ORIGIN URL}'; aws --profile amimoto-cli cloudfront create-distribution --cli-input-json "$(curl -l -s https://raw.githubusercontent.com/amimoto-ami/create-cf-dist-settings/master/source_dist_setting.sh | sh)"
 ```
 ####パブリックDNSがない場合
 http://qiita.com/kasokai/items/4ea689ce9f206e78a523
