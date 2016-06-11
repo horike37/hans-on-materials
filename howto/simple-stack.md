@@ -212,26 +212,13 @@ $ mysql -u {Master Username} -p{Master Password} {Database Name}
 可能な方はAMIMOTO AMIのIP（XX.XXX.XXX.XX/0）にしてみてください
 - 「Save」をクリック
 
-###AMIMOTOのDB情報をRDSに移行する
+###AMIMOTOのDB情報をRDSに接続する
 ####AMIMOTOにSSH接続
 AMIMOTOのインスタンスにSSHで接続してください。
 ```
 $ ssh -i /path/to/pem/{PEMFILENAME}.pem ec2-user@{INSTANCE_IP}
 ```
-####WP-CLIからAMIMOTOのDB情報をエクスポート
-```
-$ cd /var/www/vhosts/{INSTANCE_ID}
-$ wp db export /tmp/dump.sql
-```
-####MySQLでRDSにデータをインポート
-先ほどメモした値を使います
-```
-$ mysql -h {RDS_ENDPOINT} -u {Master Username} -p {Database Name} < /tmp/dump.sql
-```
-*パスワードを要求されますので、{Master Password}を入力します。
-*{RDS_ENDPOINT}には「:3306」というポート番号は不要です。
 
-###AMIMOTOのDBをRDSにつなぎかえる
 ####wp-config.phpを編集
 ```
 $ sudo su -
